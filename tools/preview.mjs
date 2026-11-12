@@ -761,6 +761,10 @@ const render = (tree, width = viewport.width > 0 ? viewport.width : 920) => `<!D
   :root{
     --dsw-alias-bg-base:#0d1017; --dsw-alias-bg-layer-1:#151922; --dsw-alias-bg-layer-2:#1b2130;
     --dsw-alias-bg-overlay:#1b2130; --dsw-alias-border-l1:#262d3d; --dsw-alias-border-l2:#39425a;
+    /* The scrim behind a dialog. The real theme ships it; the preview does not link the
+       theme, so a dialog that dims its background has to find it here or it renders with
+       no backdrop at all and the screenshot misrepresents the product. */
+    --dsw-alias-bg-mask-1:#00000080;
     --dsw-alias-brand-primary:#6ea8ff; --dsw-alias-label-primary:#e7ebf3; --dsw-alias-label-secondary:#98a2b8;
     --dsw-alias-state-error-primary:#ff7b72; --dsw-alias-state-success-primary:#3ddc97;
     --dsw-alias-state-warn-primary:#ffcc66; --dsw-specific-sidebar-fill:#11151d;
@@ -807,6 +811,20 @@ for (const effect of reportFirst.effects) effect()
 await new Promise((resolve) => setTimeout(resolve, 20))
 const reportTree = runtime.mount(registered.get('main'), { ...previewProps, initialReportOpen: true })
 const reportHtml = render(reportTree.tree)
+// The row's hand-off chooser. It is a dialog reached by a click the harness cannot make,
+// so it gets its own mount with a fixture target: same card, same list, same footer.
+runtime.reset()
+const dispatchFirst = runtime.mount(registered.get('main'), {
+  ...previewProps,
+  initialDispatchAsk: { todo: { id: 'todo-fixture-1', title: '等交换机到货后重测内网吞吐' }, target: 'session-00000000-0000-4000-8000-000000000001', remember: false },
+})
+for (const effect of dispatchFirst.effects) effect()
+await new Promise((resolve) => setTimeout(resolve, 20))
+const dispatchTree = runtime.mount(registered.get('main'), {
+  ...previewProps,
+  initialDispatchAsk: { todo: { id: 'todo-fixture-1', title: '等交换机到货后重测内网吞吐' }, target: 'session-00000000-0000-4000-8000-000000000001', remember: false },
+})
+const dispatchHtml = render(dispatchTree.tree)
 // The four states that used to have no baseline at all: an empty list, a filter that
 // matches nothing, the inbox, and a due reminder. Each mounts its own scenario and is
 // photographed by tools/screenshot.mjs, so a regression shows up as a changed image.
@@ -856,10 +874,24 @@ const mobileSettingsFirst = runtime.mount(registered.get('main'), { ...previewPr
 for (const effect of mobileSettingsFirst.effects) effect()
 await new Promise((resolve) => setTimeout(resolve, 20))
 const mobileSettingsTree = runtime.mount(registered.get('main'), { ...previewProps, initialSettingsOpen: true })
+// The hand-off chooser on a phone: its option rows have to clear the 44px thumb minimum,
+// and `check:mobile` can only measure what this pass renders.
+runtime.reset()
+const mobileDispatchFirst = runtime.mount(registered.get('main'), {
+  ...previewProps,
+  initialDispatchAsk: { todo: { id: 'todo-fixture-1', title: '等交换机到货后重测内网吞吐' }, target: 'session-00000000-0000-4000-8000-000000000001', remember: false },
+})
+for (const effect of mobileDispatchFirst.effects) effect()
+await new Promise((resolve) => setTimeout(resolve, 20))
+const mobileDispatchTree = runtime.mount(registered.get('main'), {
+  ...previewProps,
+  initialDispatchAsk: { todo: { id: 'todo-fixture-1', title: '等交换机到货后重测内网吞吐' }, target: 'session-00000000-0000-4000-8000-000000000001', remember: false },
+})
 const mobileHtml = {
   list: render(mobileList.tree, MOBILE.width),
   detail: render(mobileDetailTree.tree, MOBILE.width),
   settings: render(mobileSettingsTree.tree, MOBILE.width),
+  dispatch: render(mobileDispatchTree.tree, MOBILE.width),
 }
 viewport.width = desktopWidth
 viewport.height = desktopHeight
@@ -872,6 +904,7 @@ writeFileSync(OUT.replace(/\.html?$/, '') + '-detail.html', detailHtml)
 writeFileSync(OUT.replace(/\.html?$/, '') + '-select.html', selectHtml)
 writeFileSync(OUT.replace(/\.html?$/, '') + '-settings.html', settingsHtml)
 writeFileSync(OUT.replace(/\.html?$/, '') + '-report.html', reportHtml)
+writeFileSync(OUT.replace(/\.html?$/, '') + '-dispatch.html', dispatchHtml)
 for (const [name, html] of Object.entries(scenarioHtml)) {
   writeFileSync(OUT.replace(/\.html?$/, '') + '-' + name + '.html', html)
 }

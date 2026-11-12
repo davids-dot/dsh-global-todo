@@ -40,3 +40,22 @@ test('every icon-only button carries an accessible name', () => {
   assert.ok(buttons.length > 0, 'the panel uses icon buttons')
   assert.equal(labels.length, buttons.length, 'an icon button without a label is announced as "button"')
 })
+
+test('the hand-off chooser is a modal dialog with a name and a way out', () => {
+  // Reported 2026-11-12: aiming a single row's "交给 Agent" meant changing the toolbar's
+  // panel-wide picker first. The chooser is the answer, so its shape is a contract: a
+  // dialog (not a popover the list would clip), modal, named, and dismissable by Escape
+  // and by the scrim — a modal with no way out strands a keyboard user on a card they
+  // cannot see past.
+  assert.match(source, /className: 'gt-settings gt-dispatch-ask',[\s\S]{0,200}?role: 'dialog'/)
+  assert.match(source, /role: 'dialog',\s*'aria-modal': 'true',\s*'aria-label': t\('dispatch\.title'\)/)
+  assert.match(source, /if \(dispatchAsk !== null\) \{\s*setDispatchAsk\(null\)/)
+  assert.match(source, /event\.target\.className === 'gt-mask'/)
+})
+
+test('the chooser alternatives are buttons, and the picked one says so', () => {
+  // `role: 'listitem'` inside a `role: 'list'` is the shape the list contract above uses;
+  // pressing state is what tells a screen reader which conversation is armed.
+  assert.match(source, /className: 'gt-dispatch-list', role: 'list'/)
+  assert.match(source, /className: 'gt-dispatch-option',[\s\S]{0,200}?'aria-pressed': dispatchAsk\.target === option\.value/)
+})

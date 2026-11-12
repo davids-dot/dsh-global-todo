@@ -1179,6 +1179,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+- **Rows can choose their own conversation.** The `交给 Agent` button used to fire at
+  whatever the toolbar's picker remembered, so aiming a single item meant changing a
+  panel-wide default first — reported 2026-11-12. It now opens a chooser: pick a
+  conversation (or `自动` / a new one), optionally remember the choice, confirm. The
+  picked target is sent as authoritative, so the host does no inference on top of an
+  explicit choice, and an empty conversation list no longer hides the three targets that
+  never depend on one.
+
 ## [0.5.2] — 2026-10-19
 
 Three things the leaders in this category do that we did not.

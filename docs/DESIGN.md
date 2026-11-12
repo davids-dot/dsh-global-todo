@@ -336,6 +336,15 @@ What changes below 600px, and why each item is not cosmetic:
   the sheet cannot drift), and one group carries the auto-collect switch plus the idle window,
   writing immediately the way the toolbar switch always did. On the 390px preview this took the
   toolbar from 204px to its three purposeful rows (148px) and the first card from 393px to 337px.
+- **A row's hand-off picks its own conversation.** The toolbar's picker is a panel-wide
+  default, so aiming one row's 交给 meant changing that default first — the friction reported
+  2026-11-12. The row button now opens a modal chooser (`.gt-mask` + `.gt-dispatch-ask`):
+  the same option list the picker builds, a "remember" checkbox that writes the choice back to
+  `dsh-global-todo:target`, and a confirm step. Modal rather than a popover on the button
+  because that button lives inside the list's own scroll container, which would clip an
+  absolutely-positioned menu; the scrim uses `--dsw-alias-bg-mask-1`, the shell's own dialog
+  token, so it dims correctly under both themes. The dialog stays open until the request
+  settles, because its confirm button carries the only "正在交给…" the user sees.
 - **Scrolling down folds the search row.** It is the one row between the reader and the list that
   is not needed while reading, so moving down folds it; the chips and the group modes stay, and
   the first upward flick — or reaching the top — unfolds it. Geometry on the 390px preview: the

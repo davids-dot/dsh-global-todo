@@ -339,12 +339,16 @@ Your list is not touched by install or uninstall: it lives outside the plugin, a
   order is the sidebar's recency key (`updatedAt`). Conversations sharing a title get a short id
   suffix, and a target that is no longer listed (archived since it was chosen) is shown as
   `(archived)` instead of appearing as a different conversation.
-- **You pick the target** — the toolbar shows `交给：[ conversation ▾ ]`, listing your
-  conversations: whichever you choose is sent with `authoritative: true` and the Host honours
-  it verbatim, with no inference on top. The list marks the conversation the Host would have
-  chosen on its own, `自动` restores that behaviour, and `＋ a new conversation` starts a fresh
-  context. A choice is remembered, and changing it is one click in the same control — what you
-  see is what happens.
+- **Every row picks its own target** — the row's `Hand to agent` button opens a chooser:
+  pick a conversation, press confirm, and that item goes there (sent with
+  `authoritative: true`, honoured verbatim, with no inference on top). The list marks the
+  conversation the Host would have chosen on its own, `自动` restores that behaviour, and
+  `＋ a new conversation` starts a fresh context. Ticking "remember this choice" writes it
+  back to the toolbar's default; leaving it unticked affects **only this hand-off** — what
+  you see is what happens.
+- **The toolbar's `交给：[ conversation ▾ ]` is still the panel-wide default** — batch
+  assignment and the settings sheet read it, but a single hand-off no longer requires
+  changing it first.
 - **A receipt for every hand-off** — the panel says which conversation received the work and
   offers to open it. A dispatch starts work *elsewhere*, so staying silent looked exactly
   like "nothing happened".
